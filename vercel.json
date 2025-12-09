@@ -6,7 +6,7 @@
   },
   "crons": [
     {
-      "path": "/api/sync.js",
+      "path": "/api/sync",
       "schedule": "0 5 * * *"
     }
   ]
