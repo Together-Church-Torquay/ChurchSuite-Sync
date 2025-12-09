@@ -1,7 +1,13 @@
 import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function loadConfig() {
-  const raw = await fs.readFile("./config.json", "utf8");
+  const configPath = path.join(__dirname, "../config.json");
+  const raw = await fs.readFile(configPath, "utf8");
   return JSON.parse(raw);
 }
 
