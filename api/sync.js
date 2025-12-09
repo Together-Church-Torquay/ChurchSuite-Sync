@@ -2,6 +2,10 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
+export const config = {
+  runtime: "nodejs20.x"
+};
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -27,6 +31,16 @@ async function loadConfig() {
   } catch (err) {
     throw new Error(`Failed to load config: ${err.message}`);
   }
+}
+
+function normalizeChurchSuiteDomain(domain) {
+  if (!domain) return domain;
+  // If domain already includes .churchsuite.com, return as is
+  if (domain.includes('.churchsuite.com')) {
+    return domain;
+  }
+  // Otherwise, append .churchsuite.com
+  return `${domain}.churchsuite.com`;
 }
 
 async function fetchWithRetry(url, options, retries = 3) {
@@ -73,8 +87,10 @@ export default async function handler(req, res) {
       });
     }
 
+    // Normalize domain to ensure it has .churchsuite.com suffix
+    const normalizedDomain = normalizeChurchSuiteDomain(CHURCHSUITE_DOMAIN);
     const contacts = await fetchWithRetry(
-      `https://${CHURCHSUITE_DOMAIN}/api/v1/addressbook/contacts`,
+      `https://${normalizedDomain}/api/v1/addressbook/contacts`,
       { headers: { "X-Auth": CHURCHSUITE_API_KEY } }
     );
 
